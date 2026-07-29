@@ -1,60 +1,372 @@
- // Configuração das datas alvo
-const startOfYear2026 = new Date('January 1, 2026 00:00:00').getTime();
-const targetDate2027 = new Date('January 1, 2027 00:00:00').getTime();
-const totalYearTime = targetDate2027 - startOfYear2026;
+// ===============================
+// CONFIGURAÇÕES
+// ===============================
 
-function updateDashboard() {
-const now = new Date();
-const nowTime = now.getTime();
-const difference = targetDate2027 - nowTime;
 
-// 1. ATUALIZAR CONTADOR REGRESSIVO
-const daysElement = document.getElementById('days');
-const hoursElement = document.getElementById('hours');
-const minutesElement = document.getElementById('minutes');
-const secondsElement = document.getElementById('seconds');
-const messageElement = document.getElementById('celebration-message');
+const targetDate = new Date("January 1, 2027 00:00:00").getTime();
+const startYear = new Date("January 1, 2026 00:00:00").getTime();
+const endYear = targetDate;
 
-if (difference <= 0) {
-clearInterval(dashboardInterval);
-document.querySelector('.countdown-timer').innerHTML = "<h2 style='color:#a78bfa; width:100%; font-size:2.5rem;'>🎉 FELIZ 2027! 🎉</h2>";
-messageElement.innerText = "O futuro chegou. Desejamos um ano brilhante!";
-document.getElementById('progress-bar').style.width = "100%";
-document.getElementById('progress-percentage').innerText = "100%";
+
+// ===============================
+// ELEMENTOS
+// ===============================
+
+
+const days = document.getElementById("days");
+const hours = document.getElementById("hours");
+const minutes = document.getElementById("minutes");
+const seconds = document.getElementById("seconds");
+
+
+const progressBar = document.getElementById("progress-bar");
+const progressText = document.getElementById("progress-percentage");
+
+
+const currentDate = document.getElementById("current-date");
+const currentTime = document.getElementById("current-time");
+
+
+const message = document.getElementById("celebration-message");
+
+
+// ===============================
+// MENSAGENS
+// ===============================
+
+
+const messages = [
+
+
+"Cada segundo é uma nova oportunidade. ✨",
+
+
+"O futuro começa pelas decisões de hoje.",
+
+
+"Grandes conquistas começam com pequenos passos.",
+
+
+"Não conte apenas os dias. Faça os dias contarem.",
+
+
+"Seu futuro está sendo construído agora.",
+
+
+"Persistência supera talento quando o talento não persiste."
+
+
+];
+
+
+let currentMessage = 0;
+
+
+// ===============================
+// CONTADOR
+// ===============================
+
+
+function updateCountdown(){
+
+
+const now = new Date().getTime();
+
+
+const distance = targetDate - now;
+
+
+if(distance <= 0){
+
+
+document.querySelector(".countdown").innerHTML=`
+
+
+<h1 style="grid-column:1/-1;text-align:center;font-size:70px;color:#4f8cff;">
+
+
+🎉 FELIZ 2027 🎉
+
+
+</h1>
+
+
+`;
+
+
+message.innerHTML="Que este novo ano seja incrível!";
+
+
 return;
+
+
 }
 
-const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-daysElement.innerText = days < 10 ? '0' + days : days;
-hoursElement.innerText = hours < 10 ? '0' + hours : hours;
-minutesElement.innerText = minutes < 10 ? '0' + minutes : minutes;
-secondsElement.innerText = seconds < 10 ? '0' + seconds : seconds;
+const d=Math.floor(distance/(1000*60*60*24));
 
-// 2. ATUALIZAR RELÓGIO ATUAL (TOPO)
-const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-document.getElementById('current-date').innerText = now.toLocaleDateString('pt-BR', options);
 
-const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-document.getElementById('current-time').innerText = now.toLocaleTimeString('pt-BR', timeOptions);
+const h=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
 
-// 3. ATUALIZAR BARRA DE PROGRESSO DO ANO
-const timePassedInYear = nowTime - startOfYear2026;
-let yearPercentage = (timePassedInYear / totalYearTime) * 100;
 
-// Garante que o valor fique entre 0% e 100%
-yearPercentage = Math.max(0, Math.min(100, yearPercentage));
+const m=Math.floor((distance%(1000*60*60))/(1000*60));
 
-document.getElementById('progress-bar').style.width = `${yearPercentage}%`;
-document.getElementById('progress-percentage').innerText = `${yearPercentage.toFixed(4)}%`;
+
+const s=Math.floor((distance%(1000*60))/1000);
+
+
+days.textContent=d;
+
+
+hours.textContent=h.toString().padStart(2,"0");
+
+
+minutes.textContent=m.toString().padStart(2,"0");
+
+
+seconds.textContent=s.toString().padStart(2,"0");
+
+
 }
 
-// Inicializa o dashboard imediatamente
-updateDashboard();
 
-// Atualiza a cada 1 segundo
-const dashboardInterval = setInterval(updateDashboard, 1000);
-                                                       
+// ===============================
+// DATA E HORA
+// ===============================
+
+
+function updateClock(){
+
+
+const now=new Date();
+
+
+currentDate.innerHTML=now.toLocaleDateString("pt-BR");
+
+
+currentTime.innerHTML=now.toLocaleTimeString("pt-BR");
+
+
+}
+
+
+// ===============================
+// PROGRESSO DO ANO
+// ===============================
+
+
+function updateProgress(){
+
+
+const now=new Date().getTime();
+
+
+const progress=((now-startYear)/(endYear-startYear))*100;
+
+
+const value=Math.min(100,Math.max(0,progress));
+
+
+progressBar.style.width=value+"%";
+
+
+progressText.innerHTML=value.toFixed(2)+"%";
+
+
+}
+
+
+// ===============================
+// FRASES
+// ===============================
+
+
+function changeMessage(){
+
+
+currentMessage++;
+
+
+if(currentMessage>=messages.length){
+
+
+currentMessage=0;
+
+
+}
+
+
+message.innerHTML=messages[currentMessage];
+
+
+}
+
+
+setInterval(changeMessage,5000);
+
+
+// ===============================
+// REVELAR AO ROLAR
+// ===============================
+
+
+const observer=new IntersectionObserver((entries)=>{
+
+
+entries.forEach(entry=>{
+
+
+if(entry.isIntersecting){
+
+
+entry.target.style.opacity="1";
+
+
+entry.target.style.transform="translateY(0)";
+
+
+}
+
+
+});
+
+
+});
+
+
+document.querySelectorAll(".card,.stat-card,.timeline-item,.goal").forEach(el=>{
+
+
+el.style.opacity="0";
+
+
+el.style.transform="translateY(40px)";
+
+
+el.style.transition="1s";
+
+
+observer.observe(el);
+
+
+});
+
+
+// ===============================
+// EFEITO NOS CARDS
+// ===============================
+
+
+document.querySelectorAll(".card").forEach(card=>{
+
+
+card.addEventListener("mousemove",(e)=>{
+
+
+const rect=card.getBoundingClientRect();
+
+
+const x=e.clientX-rect.left;
+
+
+const y=e.clientY-rect.top;
+
+
+const rotateY=(x-rect.width/2)/18;
+
+
+const rotateX=(rect.height/2-y)/18;
+
+
+card.style.transform=`perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+
+
+});
+
+
+card.addEventListener("mouseleave",()=>{
+
+
+card.style.transform="perspective(800px) rotateX(0) rotateY(0)";
+
+
+});
+
+
+});
+
+
+// ===============================
+// DESTAQUE FINAL
+// ===============================
+
+
+function specialEffects(){
+
+
+const d=parseInt(days.textContent);
+
+
+if(d<=100){
+
+
+document.body.style.background="linear-gradient(135deg,#08131f,#1b0f45)";
+
+
+}
+
+
+if(d<=30){
+
+
+message.innerHTML="Falta menos de um mês para 2027! 🚀";
+
+
+}
+
+
+if(d<=10){
+
+
+message.innerHTML="Estamos quase lá! 🎆";
+
+
+}
+
+
+}
+
+
+setInterval(specialEffects,1000);
+
+
+// ===============================
+// INICIAR
+// ===============================
+
+
+function start(){
+
+
+updateCountdown();
+
+
+updateClock();
+
+
+updateProgress();
+
+
+setInterval(updateCountdown,1000);
+
+
+setInterval(updateClock,1000);
+
+
+setInterval(updateProgress,1000);
+
+
+}
+
+
+start();
